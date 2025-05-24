@@ -1,24 +1,19 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-from Database import add_teacher, verify_teacher, get_attendance_by_teacher, get_db_connection
+import cv2
+import face_recognition
+from Database import add_teacher, verify_teacher, mark_attendance, get_attendance_by_teacher, get_db_connection
 
 app = Flask(__name__)
 CORS(app)
 
 UPLOAD_FOLDER = 'uploads'
+FACES_FOLDER = 'faces'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['FACES_FOLDER'] = FACES_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-
-def mark_attendance(docente_id, tipo):
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute("INSERT INTO asistencia (docente_id, tipo) VALUES (%s, %s)", (docente_id, tipo))
-    connection.commit()
-    cursor.close()
-    connection.close()
-    return True
+os.makedirs(FACES_FOLDER, exist_ok=True)
 
 
 @app.route('/api/teachers', methods=['POST'])
@@ -34,10 +29,25 @@ def add_teacher_api():
         return jsonify({'error': 'Faltan datos requeridos'}), 400
     
     foto_path = None
+    face_path = None
     if foto:
         foto_filename = f"{dni}_{foto.filename}"
         foto_path = os.path.join(app.config['UPLOAD_FOLDER'], foto_filename)
+        face_filename = f"{dni}_face.jpg"
+        face_path = os.path.join(app.config['FACES_FOLDER'], face_filename)
         foto.save(foto_path)
+        
+        # Procesar la imagen para extraer el rostro
+        image = cv2.imread(foto_path)
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        face_locations = face_recognition.face_locations(rgb_image)
+        
+        if face_locations:
+            top, right, bottom, left = face_locations[0]
+            face_image = image[top:bottom, left:right]
+            cv2.imwrite(face_path, face_image)
+        else:
+            return jsonify({'error': 'No se detectó un rostro en la imagen'}), 400
     
     if add_teacher(nombre, dni, correo, celular, foto_path):
         return jsonify({'message': 'Docente agregado correctamente'}), 201
@@ -58,7 +68,6 @@ def verify_teacher_api():
 def mark_attendance_api():
     data = request.json
     docente_id = data.get('docente_id')
-    # Verificar última asistencia para determinar si es entrada o salida
     connection = get_db_connection()
     cursor = connection.cursor(dictionary=True)
     cursor.execute("SELECT tipo FROM asistencia WHERE docente_id = %s ORDER BY fecha_hora DESC LIMIT 1", (docente_id,))
