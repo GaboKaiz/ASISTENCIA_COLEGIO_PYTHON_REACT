@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 import cv2
@@ -16,6 +16,28 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(FACES_FOLDER, exist_ok=True)
 
 
+@app.route('/api/teachers', methods=['GET'])
+def get_teachers():
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor(dictionary=True)
+            query = "SELECT id, nombre, dni, correo, celular, foto FROM docentes"
+            cursor.execute(query)
+            teachers = cursor.fetchall()
+            cursor.close()
+            connection.close()
+            # Asegura que la ruta de la foto sea accesible
+            for teacher in teachers:
+                if teacher['foto']:
+                    teacher['foto'] = f"/Uploads/{os.path.basename(teacher['foto'])}"
+            return jsonify(teachers), 200
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({'error': 'Error al obtener docentes'}), 500
+    return jsonify({'error': 'Error de conexión a la base de datos'}), 500
+
+
 @app.route('/api/teachers', methods=['POST'])
 def add_teacher_api():
     data = request.form
@@ -31,7 +53,8 @@ def add_teacher_api():
     foto_path = None
     face_path = None
     if foto:
-        foto_filename = f"{dni}_{foto.filename}"
+        # Usar DNI y nombre para el nombre del archivo
+        foto_filename = f"{dni}_{nombre}.jpg"
         foto_path = os.path.join(app.config['UPLOAD_FOLDER'], foto_filename)
         face_filename = f"{dni}_face.jpg"
         face_path = os.path.join(app.config['FACES_FOLDER'], face_filename)
@@ -52,6 +75,11 @@ def add_teacher_api():
     if add_teacher(nombre, dni, correo, celular, foto_path):
         return jsonify({'message': 'Docente agregado correctamente'}), 201
     return jsonify({'error': 'Error al agregar docente'}), 500
+
+
+@app.route('/Uploads/<filename>')
+def serve_uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/api/verify', methods=['POST'])
@@ -95,7 +123,6 @@ def get_stats():
     if connection:
         try:
             cursor = connection.cursor(dictionary=True)
-            # Contar docentes únicos
             cursor.execute("SELECT COUNT(DISTINCT id) as teacher_count FROM docentes")
             teacher_count = cursor.fetchone()['teacher_count']
             cursor.close()

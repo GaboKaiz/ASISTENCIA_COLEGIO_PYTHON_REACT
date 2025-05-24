@@ -39,6 +39,14 @@ const Sidebar = () => {
               Asistencia
             </Link>
           </li>
+          <li>
+            <Link
+              to="/teachers"
+              className="block py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Lista de Docentes
+            </Link>
+          </li>
         </ul>
       </nav>
     </div>

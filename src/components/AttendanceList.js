@@ -47,79 +47,85 @@ const AttendanceList = () => {
   }, []);
 
   return (
-    <div className="main-content ml-64 p-8">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
-        Asistencia de Docentes
-      </h2>
-      <div className="card">
-        <h3 className="text-xl font-semibold mb-4">Verificar Docente</h3>
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Ingrese DNI"
-            value={dni}
-            onChange={(e) => setDni(e.target.value)}
-            className="flex-1"
-          />
-          <button
-            onClick={handleVerify}
-            className="bg-teal-500 text-white hover:bg-teal-600"
-          >
-            Verificar
-          </button>
-        </div>
-        {teacher && (
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-gray-700">
-              Docente: <span className="font-medium">{teacher.nombre}</span>
-            </p>
+    <div className="main-content">
+      <div className="centered-container">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+          Asistencia de Docentes
+        </h2>
+        <div className="card">
+          <h3 className="text-xl font-semibold mb-4 text-center">
+            Verificar Docente
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-4 mb-4 justify-center">
+            <input
+              type="text"
+              placeholder="Ingrese DNI"
+              value={dni}
+              onChange={(e) => setDni(e.target.value)}
+              className="max-w-md"
+            />
             <button
-              onClick={handleMarkAttendance}
-              className="bg-blue-500 text-white hover:bg-blue-600 mt-2"
+              onClick={handleVerify}
+              className="bg-teal-500 text-white hover:bg-teal-600"
             >
-              Marcar Asistencia
+              Verificar
             </button>
           </div>
-        )}
-      </div>
-      <div className="card">
-        <h3 className="text-xl font-semibold mb-4">Buscar Asistencia</h3>
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <input
-            type="text"
-            placeholder="Buscar por nombre"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="flex-1"
-          />
-          <button
-            onClick={handleSearch}
-            className="bg-blue-500 text-white hover:bg-blue-600"
-          >
-            Buscar
-          </button>
+          {teacher && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg text-center">
+              <p className="text-gray-700">
+                Docente: <span className="font-medium">{teacher.nombre}</span>
+              </p>
+              <button
+                onClick={handleMarkAttendance}
+                className="bg-blue-500 text-white hover:bg-blue-600 mt-2"
+              >
+                Marcar Asistencia
+              </button>
+            </div>
+          )}
         </div>
-        <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>DNI</th>
-                <th>Tipo</th>
-                <th>Fecha y Hora</th>
-              </tr>
-            </thead>
-            <tbody>
-              {attendance.map((record) => (
-                <tr key={record.id}>
-                  <td>{record.nombre}</td>
-                  <td>{record.dni}</td>
-                  <td>{record.tipo}</td>
-                  <td>{new Date(record.fecha_hora).toLocaleString()}</td>
+        <div className="card">
+          <h3 className="text-xl font-semibold mb-4 text-center">
+            Buscar Asistencia
+          </h3>
+          <div className="flex flex-col sm:flex-row gap-4 mb-4 justify-center">
+            <input
+              type="text"
+              placeholder="Buscar por nombre"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="max-w-md"
+            />
+            <button
+              onClick={handleSearch}
+              className="bg-blue-500 text-white hover:bg-blue-600"
+            >
+              Buscar
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table mx-auto">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>DNI</th>
+                  <th>Tipo</th>
+                  <th>Fecha y Hora</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {attendance.map((record) => (
+                  <tr key={record.id}>
+                    <td>{record.nombre}</td>
+                    <td>{record.dni}</td>
+                    <td>{record.tipo}</td>
+                    <td>{new Date(record.fecha_hora).toLocaleString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
