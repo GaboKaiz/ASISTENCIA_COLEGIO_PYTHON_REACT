@@ -36,7 +36,7 @@ const AttendanceList = () => {
         docente_id: teacher.id,
       });
       alert("Asistencia marcada");
-      handleSearch(); // Actualizar lista
+      handleSearch();
     } catch (error) {
       alert("Error al marcar asistencia");
     }
@@ -47,73 +47,81 @@ const AttendanceList = () => {
   }, []);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Asistencia de Docentes</h2>
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Verificar Docente</h3>
-        <input
-          type="text"
-          placeholder="Ingrese DNI"
-          value={dni}
-          onChange={(e) => setDni(e.target.value)}
-          className="border p-2 rounded mr-2"
-        />
-        <button
-          onClick={handleVerify}
-          className="bg-green-500 text-white p-2 rounded"
-        >
-          Verificar
-        </button>
+    <div className="main-content ml-64 p-8">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">
+        Asistencia de Docentes
+      </h2>
+      <div className="card">
+        <h3 className="text-xl font-semibold mb-4">Verificar Docente</h3>
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <input
+            type="text"
+            placeholder="Ingrese DNI"
+            value={dni}
+            onChange={(e) => setDni(e.target.value)}
+            className="flex-1"
+          />
+          <button
+            onClick={handleVerify}
+            className="bg-teal-500 text-white hover:bg-teal-600"
+          >
+            Verificar
+          </button>
+        </div>
         {teacher && (
-          <div className="mt-2">
-            <p>Docente: {teacher.nombre}</p>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <p className="text-gray-700">
+              Docente: <span className="font-medium">{teacher.nombre}</span>
+            </p>
             <button
               onClick={handleMarkAttendance}
-              className="bg-blue-500 text-white p-2 rounded mt-2"
+              className="bg-blue-500 text-white hover:bg-blue-600 mt-2"
             >
               Marcar Asistencia
             </button>
           </div>
         )}
       </div>
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold">Buscar Asistencia</h3>
-        <input
-          type="text"
-          placeholder="Buscar por nombre"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border p-2 rounded mr-2"
-        />
-        <button
-          onClick={handleSearch}
-          className="bg-blue-500 text-white p-2 rounded"
-        >
-          Buscar
-        </button>
+      <div className="card">
+        <h3 className="text-xl font-semibold mb-4">Buscar Asistencia</h3>
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <input
+            type="text"
+            placeholder="Buscar por nombre"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1"
+          />
+          <button
+            onClick={handleSearch}
+            className="bg-blue-500 text-white hover:bg-blue-600"
+          >
+            Buscar
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>DNI</th>
+                <th>Tipo</th>
+                <th>Fecha y Hora</th>
+              </tr>
+            </thead>
+            <tbody>
+              {attendance.map((record) => (
+                <tr key={record.id}>
+                  <td>{record.nombre}</td>
+                  <td>{record.dni}</td>
+                  <td>{record.tipo}</td>
+                  <td>{new Date(record.fecha_hora).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <table className="w-full border-collapse border">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border p-2">Nombre</th>
-            <th className="border p-2">DNI</th>
-            <th className="border p-2">Tipo</th>
-            <th className="border p-2">Fecha y Hora</th>
-          </tr>
-        </thead>
-        <tbody>
-          {attendance.map((record) => (
-            <tr key={record.id}>
-              <td className="border p-2">{record.nombre}</td>
-              <td className="border p-2">{record.dni}</td>
-              <td className="border p-2">{record.tipo}</td>
-              <td className="border p-2">
-                {new Date(record.fecha_hora).toLocaleString()}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   );
 };

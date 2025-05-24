@@ -89,113 +89,128 @@ const TeacherForm = () => {
 
   useEffect(() => {
     return () => {
-      stopCamera(); // Detener la cámara al desmontar el componente
+      stopCamera();
     };
   }, []);
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Agregar Docente</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block">Nombre</label>
-          <input
-            type="text"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block">DNI</label>
-          <input
-            type="text"
-            name="dni"
-            value={formData.dni}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block">Correo</label>
-          <input
-            type="email"
-            name="correo"
-            value={formData.correo}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block">Celular</label>
-          <input
-            type="text"
-            name="celular"
-            value={formData.celular}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block">Foto</label>
-          {!cameraActive ? (
-            <>
-              <input
-                type="file"
-                name="foto"
-                onChange={handleFileChange}
-                className="w-full border p-2 rounded"
-                accept="image/*"
-              />
-              <button
-                type="button"
-                onClick={startCamera}
-                className="bg-green-500 text-white p-2 rounded mt-2"
-              >
-                Tomar Foto con Cámara
-              </button>
-            </>
-          ) : (
-            <>
-              <video
-                ref={videoRef}
-                autoPlay
-                className="w-full max-w-md border rounded"
-              ></video>
-              <canvas
-                ref={canvasRef}
-                width="640"
-                height="480"
-                className="hidden"
-              ></canvas>
-              <div className="space-x-2">
+    <div className="main-content ml-64 p-8">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800">Agregar Docente</h2>
+      <div className="card">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Nombre
+            </label>
+            <input
+              type="text"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+              className="mt-1"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              DNI
+            </label>
+            <input
+              type="text"
+              name="dni"
+              value={formData.dni}
+              onChange={handleChange}
+              className="mt-1"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Correo
+            </label>
+            <input
+              type="email"
+              name="correo"
+              value={formData.correo}
+              onChange={handleChange}
+              className="mt-1"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Celular
+            </label>
+            <input
+              type="text"
+              name="celular"
+              value={formData.celular}
+              onChange={handleChange}
+              className="mt-1"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Foto
+            </label>
+            {!cameraActive ? (
+              <div className="mt-1 space-y-4">
+                <input
+                  type="file"
+                  name="foto"
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  accept="image/*"
+                />
                 <button
                   type="button"
-                  onClick={capturePhoto}
-                  className="bg-blue-500 text-white p-2 rounded"
+                  onClick={startCamera}
+                  className="bg-teal-500 text-white hover:bg-teal-600"
                 >
-                  Capturar Foto
-                </button>
-                <button
-                  type="button"
-                  onClick={stopCamera}
-                  className="bg-red-500 text-white p-2 rounded"
-                >
-                  Detener Cámara
+                  Tomar Foto con Cámara
                 </button>
               </div>
-            </>
-          )}
-        </div>
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-          Agregar Docente
-        </button>
-      </form>
+            ) : (
+              <div className="mt-1">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  className="w-full max-w-md rounded-lg border border-gray-200"
+                ></video>
+                <canvas
+                  ref={canvasRef}
+                  width="640"
+                  height="480"
+                  className="hidden"
+                ></canvas>
+                <div className="flex gap-4 mt-4">
+                  <button
+                    type="button"
+                    onClick={capturePhoto}
+                    className="bg-blue-500 text-white hover:bg-blue-600"
+                  >
+                    Capturar Foto
+                  </button>
+                  <button
+                    type="button"
+                    onClick={stopCamera}
+                    className="bg-red-500 text-white hover:bg-red-600"
+                  >
+                    Detener Cámara
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white hover:bg-blue-600 w-full"
+          >
+            Agregar Docente
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -8,7 +8,7 @@ from Database import add_teacher, verify_teacher, mark_attendance, get_attendanc
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'Uploads'
 FACES_FOLDER = 'faces'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['FACES_FOLDER'] = FACES_FOLDER
@@ -87,6 +87,24 @@ def get_attendance_api():
     nombre = request.args.get('nombre', '')
     attendance = get_attendance_by_teacher(nombre)
     return jsonify(attendance), 200
+
+
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor(dictionary=True)
+            # Contar docentes únicos
+            cursor.execute("SELECT COUNT(DISTINCT id) as teacher_count FROM docentes")
+            teacher_count = cursor.fetchone()['teacher_count']
+            cursor.close()
+            connection.close()
+            return jsonify({'teacher_count': teacher_count}), 200
+        except Exception as e:
+            print(f"Error: {e}")
+            return jsonify({'error': 'Error al obtener estadísticas'}), 500
+    return jsonify({'error': 'Error de conexión a la base de datos'}), 500
 
 
 if __name__ == '__main__':
